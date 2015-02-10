@@ -1,0 +1,559 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Klavier</title>
+  <script type="text/javascript" src="javascripts/three.js"></script>
+  <script type="text/javascript" src="javascripts/lib/physi.js"></script>
+  <script type="text/javascript" src="javascripts/leap-0.6.2.min.js"></script>
+  <script type="text/javascript" src="javascripts/leap-plugins-0.1.6.min.js"></script>
+  <script type="text/javascript" src="javascripts/leap.widgets.js"></script>
+  <script type="text/javascript" src="javascripts/audiosynth.js"></script>
+  <script type="text/javascript" src="javascripts/dat.gui.min.js"></script>
+
+  <style type="text/css">#connect-leap{zoom: 0.4;}</style>
+</head>
+<body>
+  <script type="text/javascript">
+    var initScene = function () {
+      Physijs.scripts.worker = 'javascripts/lib/physijs_worker.js';
+      window.scene = new Physijs.Scene();
+      window.scene.addEventListener('update', function() {
+        scene.simulate( undefined, 2 );
+      });
+      window.scene.setGravity({x:0,y:0,z:0});
+      window.renderer = new THREE.WebGLRenderer({
+        alpha: true
+      });
+      window.renderer.shadowMapEnabled = true;
+      window.renderer.shadowMapType = THREE.BasicShadowMap;
+
+
+      window.renderer.setClearColor(0xA4A4A4, 2);
+      window.renderer.setSize(window.innerWidth, window.innerHeight);
+
+      window.renderer.domElement.style.position = 'fixed';
+      window.renderer.domElement.style.top = 0;
+      window.renderer.domElement.style.left = 0;
+      window.renderer.domElement.style.width = '100%';
+      window.renderer.domElement.style.height = '100%';
+
+      document.body.appendChild(window.renderer.domElement);
+
+
+
+      window.widgets = new LeapWidgets(window.scene);
+      widgets.initLeapHand({sampleRecording: 'recordings/piano.lz'});
+	  
+      var wall = widgets.createWall(new THREE.Vector3(0,60, -40), new THREE.Vector3(600, 40, 120), 0x000000);
+	  wall.name = "Boden";
+	  
+	  var wall2 = widgets.createWall(new THREE.Vector3(0, 90, -125), new THREE.Vector3(600, 130, 20));
+	  
+	  //--Klavier
+	  var wall3 = widgets.createWall(new THREE.Vector3(0, 160, -200), new THREE.Vector3(600, 15, 200));
+	  
+	  //--NEW
+      var colorblackbutton={};
+		colorblackbutton.pressed = 0xFF0000;
+		colorblackbutton.unpressed = 0x000000;
+	  var colorwhitebutton = {};
+		colorwhitebutton.pressed = 0xFF0000;
+		colorwhitebutton.unpressed = 0xffffff;
+	  //++NEW  	  
+	
+  	window.obj = {keyboard : false};
+  	window.settingBox = new dat.GUI();
+  	window.settingBox.add(window.obj, 'keyboard').onFinishChange(function(value){
+  		widgets.updateHandMesh(value);
+  	}).listen();
+	
+	  //--Black Buttons
+	  var ButtonCis1 = widgets.createWall1(new THREE.Vector3(-228, 120, -60), new THREE.Vector3(20, 10, 60));
+	  ButtonCis1.addEventListener('collision', function(object, linear_velocity, angular_velocity) {
+        if (linear_velocity.y > 100){
+        	this.rotation.x = 0.1;
+        	this.__dirtyRotation = true;
+			//Lautstärke piano._parent._volume = 1000;
+			piano.play('C#',3,1);
+			this.setAngularFactor(new THREE.Vector3( 1, 0, 0 ))
+			setTimeout(function(){
+				ButtonCis1.rotation.x = 0;
+				ButtonCis1.__dirtyRotation = true;
+			}, 100);
+		}
+      });
+	  
+	  var ButtonDis1 = widgets.createWall1( new THREE.Vector3(-196, 120, -60), new THREE.Vector3(20, 10, 60));
+	  ButtonDis1.addEventListener('collision', function(object, linear_velocity, angular_velocity) {
+        if (linear_velocity.y > 100){
+			this.rotation.x = 0.1;
+        	this.__dirtyRotation = true;
+			piano.play('D#',3,1);
+			this.setAngularFactor(new THREE.Vector3( 1, 0, 0 ))
+			setTimeout(function(){
+				ButtonDis1.rotation.x = 0;
+				ButtonDis1.__dirtyRotation = true;
+			}, 100);
+		}
+      });
+	  var ButtonFis1 = widgets.createWall1( new THREE.Vector3(-132, 120, -60), new THREE.Vector3(20, 10, 60));
+	  ButtonFis1.addEventListener('collision', function(object, linear_velocity, angular_velocity) {
+        if (linear_velocity.y > 100){
+			this.rotation.x = 0.1;
+        	this.__dirtyRotation = true;
+			piano.play('F#',3,1);
+			this.setAngularFactor(new THREE.Vector3( 1, 0, 0 ))
+			setTimeout(function(){
+				ButtonFis1.rotation.x = 0;
+				ButtonFis1.__dirtyRotation = true;
+			}, 100);
+		}
+      });
+	  var ButtonGis1 = widgets.createWall1( new THREE.Vector3(-100, 120, -60), new THREE.Vector3(20, 10, 60));
+	  ButtonGis1.addEventListener('collision', function(object, linear_velocity, angular_velocity) {
+        if (linear_velocity.y > 100){
+			this.rotation.x = 0.1;
+        	this.__dirtyRotation = true;
+			piano.play('G#',3,1);
+			this.setAngularFactor(new THREE.Vector3( 1, 0, 0 ))
+			setTimeout(function(){
+				ButtonGis1.rotation.x = 0;
+				ButtonGis1.__dirtyRotation = true;
+			}, 100);
+		}
+      });
+	  var ButtonAs1 = widgets.createWall1( new THREE.Vector3(-68, 120, -60), new THREE.Vector3(20, 10, 60));
+	  ButtonAs1.addEventListener('collision', function(object, linear_velocity, angular_velocity) {
+        if (linear_velocity.y > 100){
+			this.rotation.x = 0.1;
+        	this.__dirtyRotation = true;
+			piano.play('A#',3,1);
+			this.setAngularFactor(new THREE.Vector3( 1, 0, 0 ))
+			setTimeout(function(){
+				ButtonAs1.rotation.x = 0;
+				ButtonAs1.__dirtyRotation = true;
+			}, 100);
+		}
+      });
+	  var ButtonCis2 = widgets.createWall1( new THREE.Vector3(-11, 120, -60), new THREE.Vector3(20, 10, 60));
+	  ButtonCis2.addEventListener('collision', function(object, linear_velocity, angular_velocity) {
+        if (linear_velocity.y > 100){
+			this.rotation.x = 0.1;
+        	this.__dirtyRotation = true;
+			piano.play('C#',4,1);
+			this.setAngularFactor(new THREE.Vector3( 1, 0, 0 ))
+			setTimeout(function(){
+				ButtonCis2.rotation.x = 0;
+				ButtonCis2.__dirtyRotation = true;
+			}, 100);
+		}
+      });
+	  var ButtonDis2 = widgets.createWall1( new THREE.Vector3(18, 120, -60), new THREE.Vector3(20, 10, 60));
+	  ButtonDis2.addEventListener('collision', function(object, linear_velocity, angular_velocity) {
+        if (linear_velocity.y > 100){
+			this.rotation.x = 0.1;
+        	this.__dirtyRotation = true;
+			piano.play('D#',4,1);
+			this.setAngularFactor(new THREE.Vector3( 1, 0, 0 ))
+			setTimeout(function(){
+				ButtonDis2.rotation.x = 0;
+				ButtonDis2.__dirtyRotation = true;
+			}, 100);
+		}
+      });
+	  var ButtonFis2 = widgets.createWall1( new THREE.Vector3(82, 120, -60), new THREE.Vector3(20, 10, 60));
+	  ButtonFis2.addEventListener('collision', function(object, linear_velocity, angular_velocity) {
+        if (linear_velocity.y > 100){
+			this.rotation.x = 0.1;
+        	this.__dirtyRotation = true;
+			piano.play('F#',4,1);
+			this.setAngularFactor(new THREE.Vector3( 1, 0, 0 ))
+			setTimeout(function(){
+				ButtonFis2.rotation.x = 0;
+				ButtonFis2.__dirtyRotation = true;
+			}, 100);
+		}
+      });
+	  var ButtonGis2 = widgets.createWall1( new THREE.Vector3(114, 120, -60), new THREE.Vector3(20, 10, 60));
+	  ButtonGis2.addEventListener('collision', function(object, linear_velocity, angular_velocity) {
+        if (linear_velocity.y > 100){
+			this.rotation.x = 0.1;
+        	this.__dirtyRotation = true;
+			piano.play('G#',4,1);
+			this.setAngularFactor(new THREE.Vector3( 1, 0, 0 ))
+			setTimeout(function(){
+				ButtonGis2.rotation.x = 0;
+				ButtonGis2.__dirtyRotation = true;
+			}, 100);
+		}
+      });
+	  var ButtonAs2 = widgets.createWall1( new THREE.Vector3(146, 120, -60), new THREE.Vector3(20, 10, 60));
+	  ButtonAs2.addEventListener('collision', function(object, linear_velocity, angular_velocity) {
+        if (linear_velocity.y > 100){
+			this.rotation.x = 0.1;
+        	this.__dirtyRotation = true;
+			piano.play('A#',4,1);
+			this.setAngularFactor(new THREE.Vector3( 1, 0, 0 ))
+			setTimeout(function(){
+				ButtonAs2.rotation.x = 0;
+				ButtonAs2.__dirtyRotation = true;
+			}, 100);
+		}
+      });
+	  var ButtonCis3 = widgets.createWall1( new THREE.Vector3(210, 120, -60), new THREE.Vector3(20, 10, 60));
+	  ButtonCis3.addEventListener('collision', function(object, linear_velocity, angular_velocity) {
+        if (linear_velocity.y > 100){
+			this.rotation.x = 0.1;
+        	this.__dirtyRotation = true;
+			piano.play('C#',5,1);
+			this.setAngularFactor(new THREE.Vector3( 1, 0, 0 ))
+			setTimeout(function(){
+				ButtonCis3.rotation.x = 0;
+				ButtonCis3.__dirtyRotation = true;
+			}, 100);
+		}
+      });
+	  
+	  // Weiss
+	  var ButtonC1 = widgets.createButton(new THREE.Vector3(-250, 100, -50), new THREE.Vector3(30, 20, 100),colorwhitebutton);
+	  ButtonC1.addEventListener('collision', function(object, linear_velocity, angular_velocity) {		
+		if (object.name == "Boden"){
+			piano.play('C',3,1);
+		}
+		if (linear_velocity.y < 0){
+		}
+      });
+	  
+	  var ButtonD1 = widgets.createButton( new THREE.Vector3(-218, 100, -50), new THREE.Vector3(30, 20, 100),colorwhitebutton);
+      ButtonD1.addEventListener('collision', function(object) {
+        
+		if (object.name == "Boden"){
+			piano.play('D',3,1);
+		}
+      });
+	  
+	  var ButtonE1 = widgets.createButton( new THREE.Vector3(-186, 100, -50), new THREE.Vector3(30, 20, 100),colorwhitebutton);
+      ButtonE1.addEventListener('collision', function(object) {
+        
+		if (object.name == "Boden"){
+			piano.play('E',3,1);
+		}
+      });
+	  
+	  var ButtonF1 = widgets.createButton( new THREE.Vector3(-154, 100, -50), new THREE.Vector3(30, 20, 100),colorwhitebutton);
+      ButtonF1.addEventListener('collision', function(object) {
+        
+		if (object.name == "Boden"){
+			piano.play('F',3,1);
+		}
+      });
+	  
+	  var ButtonG1 = widgets.createButton( new THREE.Vector3(-122, 100, -50), new THREE.Vector3(30, 20, 100),colorwhitebutton);
+      ButtonG1.addEventListener('collision', function(object) {
+        
+		if (object.name == "Boden"){
+			piano.play('G',3,1);
+		}
+      });
+	  
+	  var ButtonA1 = widgets.createButton( new THREE.Vector3(-90, 100, -50), new THREE.Vector3(30, 20, 100),colorwhitebutton);
+      ButtonA1.addEventListener('collision', function(object) {
+        
+		if (object.name == "Boden"){
+			piano.play('A',3,1);
+		}
+      });
+	  
+	  var ButtonH1 = widgets.createButton( new THREE.Vector3(-58, 100, -50), new THREE.Vector3(30, 20, 100),colorwhitebutton);
+      ButtonH1.addEventListener('collision', function(object) {
+        
+		if (object.name == "Boden"){
+			piano.play('B',3,1);
+		}
+      });
+	  
+	  var ButtonC2 = widgets.createButton( new THREE.Vector3(-26, 100, -50), new THREE.Vector3(30, 20, 100),colorwhitebutton);
+	  ButtonC2.addEventListener('collision', function(object, linear_velocity, angular_velocity) {		
+      	
+    	if (object.name == "Boden"){
+			piano.play('C',4,1);
+		}
+      });
+	  
+	  var ButtonD2 = widgets.createButton( new THREE.Vector3(6, 100, -50), new THREE.Vector3(30, 20, 100),colorwhitebutton);
+      ButtonD2.addEventListener('collision', function(object) {
+        
+		if (object.name == "Boden"){
+			piano.play('D',4,1);
+		}
+      });
+	  
+	  var ButtonE2 = widgets.createButton( new THREE.Vector3(38, 100, -50), new THREE.Vector3(30, 20, 100),colorwhitebutton);
+      ButtonE2.addEventListener('collision', function(object) {
+        
+		if (object.name == "Boden"){
+			piano.play('E',4,1);
+		}
+      });
+	  
+	  var ButtonF2 = widgets.createButton( new THREE.Vector3(70, 100, -50), new THREE.Vector3(30, 20, 100),colorwhitebutton);
+      ButtonF2.addEventListener('collision', function(object) {
+        
+		if (object.name == "Boden"){
+			piano.play('F',4,1);
+		}
+      });
+	  
+	  var ButtonG2 = widgets.createButton( new THREE.Vector3(102, 100, -50), new THREE.Vector3(30, 20, 100),colorwhitebutton);
+      ButtonG2.addEventListener('collision', function(object) {
+        
+		if (object.name == "Boden"){
+			piano.play('G',4,1);
+		}
+      });
+	  
+	  var ButtonA2 = widgets.createButton( new THREE.Vector3(134, 100, -50), new THREE.Vector3(30, 20, 100),colorwhitebutton);
+      ButtonA2.addEventListener('collision', function(object) {
+        
+		if (object.name == "Boden"){
+			piano.play('A',4,1);
+		}
+      });
+	  
+	  var ButtonH2 = widgets.createButton( new THREE.Vector3(166, 100, -50), new THREE.Vector3(30, 20, 100),colorwhitebutton);
+      ButtonH2.addEventListener('collision', function(object) {
+        
+		if (object.name == "Boden"){
+			piano.play('B',4,1);
+		}
+      });
+	  
+	  var ButtonC3 = widgets.createButton( new THREE.Vector3(198, 100, -50), new THREE.Vector3(30, 20, 100),colorwhitebutton);
+      ButtonC3.addEventListener('collision', function(object) {
+        
+		if (object.name == "Boden"){
+			piano.play('C',5,1);
+		}
+      });
+	  
+	  var ButtonD3 = widgets.createButton( new THREE.Vector3(230, 100, -50), new THREE.Vector3(30, 20, 100),colorwhitebutton);
+      ButtonD3.addEventListener('collision', function(object) {
+        		
+		if (object.name == "Boden"){
+			piano.play('D',5,1);
+		}
+      });
+
+      //per Tastatur 
+	
+	var piano = Synth.createInstrument('piano');	 
+	  window.addEventListener('keydown', onDocumentKeyDown);
+    function onDocumentKeyDown(event)
+    {
+	  if (window.obj.keyboard)
+	  {
+	  var input = String.fromCharCode(event.which);
+	  switch(input)
+	  {
+		case "A": 
+			ButtonC1.rotation.x = 0.25;
+			ButtonC1.__dirtyRotation = true;
+			break;
+		case "Q": 
+			ButtonCis1.rotation.x = 0.1;
+			ButtonCis1.__dirtyRotation = true;
+			piano.play('C#',3,1);
+			setTimeout(function(){
+				ButtonCis1.rotation.x = 0;
+				ButtonCis1.__dirtyRotation = true;
+			}, 100);
+			break;
+		case "Y": 
+			ButtonD1.rotation.x = 0.25;
+			ButtonD1.__dirtyRotation = true;
+			break;
+		case "W": 
+			ButtonDis1.rotation.x = 0.1;
+			ButtonDis1.__dirtyRotation = true;
+			piano.play('D#',3,1);
+			setTimeout(function(){
+				ButtonDis1.rotation.x = 0;
+				ButtonDis1.__dirtyRotation = true;
+			}, 100);
+			break;
+		case "S": 
+			ButtonE1.rotation.x = 0.25;
+			ButtonE1.__dirtyRotation = true;
+			break;
+		case "X": 
+			ButtonF1.rotation.x = 0.25;
+			ButtonF1.__dirtyRotation = true;
+			break;
+		case "3":
+			ButtonFis1.rotation.x = 0.1;
+			ButtonFis1.__dirtyRotation = true;
+			piano.play('F#',3,1);
+			setTimeout(function(){
+				ButtonFis1.rotation.x = 0;
+				ButtonFis1.__dirtyRotation = true;
+			}, 100);
+			break;
+		case "D":
+			ButtonG1.rotation.x = 0.25;
+			ButtonG1.__dirtyRotation = true;
+			break;
+		case "E": 
+			ButtonGis1.rotation.x = 0.1;
+			ButtonGis1.__dirtyRotation = true;
+			piano.play('G#',3,1);
+			setTimeout(function(){
+				ButtonGis1.rotation.x = 0;
+				ButtonGis1.__dirtyRotation = true;
+			}, 100);
+			break;
+		case "C": 
+			ButtonA1.rotation.x = 0.25;
+			ButtonA1.__dirtyRotation = true;
+			break;
+		case "R": 
+			ButtonAs1.rotation.x = 0.1;
+			ButtonAs1.__dirtyRotation = true;
+			piano.play('A#',3,1);
+			setTimeout(function(){
+				ButtonAs1.rotation.x = 0;
+				ButtonAs1.__dirtyRotation = true;
+			}, 100);
+			break;
+		case "F": 
+			ButtonH1.rotation.x = 0.25;
+			ButtonH1.__dirtyRotation = true;
+			break;
+		case "V": 
+			ButtonC2.rotation.x = 0.25;
+			ButtonC2.__dirtyRotation = true;
+			break;
+		case "T": 
+			ButtonCis2.rotation.x = 0.1;
+			ButtonCis2.__dirtyRotation = true;
+			piano.play('C#',4,1);
+			setTimeout(function(){
+				ButtonCis2.rotation.x = 0;
+				ButtonCis2.__dirtyRotation = true;
+			}, 100);
+			break;
+		case "G": 
+			ButtonD2.rotation.x = 0.25;
+			ButtonD2.__dirtyRotation = true;
+			break;
+		case "Z": 
+			ButtonDis2.rotation.x = 0.1;
+			ButtonDis2.__dirtyRotation = true;
+			piano.play('D#',4,1);
+			setTimeout(function(){
+				ButtonDis2.rotation.x = 0;
+				ButtonDis2.__dirtyRotation = true;
+			}, 100);
+			break;
+		case "B": 
+			ButtonE2.rotation.x = 0.25;
+			ButtonE2.__dirtyRotation = true;
+			break;
+		case "H": 
+			ButtonF2.rotation.x = 0.25;
+			ButtonF2.__dirtyRotation = true;
+			break;
+		case "U": 
+			ButtonFis2.rotation.x = 0.1;
+			ButtonFis2.__dirtyRotation = true;
+			piano.play('F#',4,1);
+			setTimeout(function(){
+				ButtonFis2.rotation.x = 0;
+				ButtonFis2.__dirtyRotation = true;
+			}, 100);
+			break;
+		case "N": 
+			ButtonG2.rotation.x = 0.25;
+			ButtonG2.__dirtyRotation = true;
+			break;
+		case "I": 
+			ButtonGis2.rotation.x = 0.1;
+			ButtonGis2.__dirtyRotation = true;
+			piano.play('G#',4,1);
+			setTimeout(function(){
+				ButtonGis2.rotation.x = 0;
+				ButtonGis2.__dirtyRotation = true;
+			}, 100);
+			break;
+		case "J": 
+			ButtonA2.rotation.x = 0.25;
+			ButtonA2.__dirtyRotation = true;
+			break;
+		case "O": 
+			ButtonAs2.rotation.x = 0.1;
+			ButtonAs2.__dirtyRotation = true;
+			piano.play('A#',4,1);
+			setTimeout(function(){
+				ButtonAs2.rotation.x = 0;
+				ButtonAs2.__dirtyRotation = true;
+			}, 100);
+			break;
+		case "M": 
+			ButtonH2.rotation.x = 0.25;
+			ButtonH2.__dirtyRotation = true;
+			break;
+		case "K": 
+			ButtonC3.rotation.x = 0.25;
+			ButtonC3.__dirtyRotation = true;
+			break;
+		case "P": 
+			ButtonCis3.rotation.x = 0.1;
+			ButtonCis3.__dirtyRotation = true;
+			piano.play('C#',5,1);
+			setTimeout(function(){
+				ButtonCis3.rotation.x = 0;
+				ButtonCis3.__dirtyRotation = true;
+			}, 100);
+			break;
+		case "L":
+			ButtonD3.rotation.x = 0.25;
+			ButtonD3.__dirtyRotation = true;
+			break;
+	  }
+	  }
+    }
+	  
+	  
+
+	  
+	  //++Buttons erstellen
+
+      var spotLight = new THREE.SpotLight(0xffffff, 7);
+      spotLight.shadowCameraVisible = false;
+      spotLight.castShadow = false;
+      spotLight.shadowMapWidth = 6048;
+      spotLight.shadowMapHeight = 6048;
+      spotLight.shadowCameraFar = 1000;
+      spotLight.shadowDarkness = 0.5;
+      spotLight.position.fromArray([0,250,1000]);
+      spotLight.target.position.fromArray([0,200,0]);;
+      scene.add(spotLight);
+
+      window.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
+      window.camera.position.fromArray([0, 300, 280]);
+      window.camera.lookAt(new THREE.Vector3(0, 200, 0));
+
+      window.addEventListener('resize', function () {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.render(scene, camera);
+      }, false);
+
+      scene.add(camera);
+    };
+
+    initScene();
+  </script>
+
+</body>
+</html>
